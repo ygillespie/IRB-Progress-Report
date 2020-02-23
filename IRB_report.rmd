@@ -10,7 +10,7 @@ toc: yes
 toc_float: yes
 ---
   
-  ```{r setup, include=FALSE, warning = FALSE}
+```{r setup, include=FALSE, warning = FALSE}
 library(knitr, warn.conflicts = F, quietly = T)
 library(tidyr, warn.conflicts = F, quietly = T)
 library(dplyr, warn.conflicts = F, quietly = T)
@@ -29,12 +29,15 @@ beach_token<-decrypt_dpapi_pw(credential_path)
 ```{r variable selection, include=FALSE}
 # Create connections
 rcon <- redcapConnection(url=uri, token=beach_token)
+
 # variables
 desired_fields=c("test_id","redcap_event_name",
                  "beach_part_drop_out",
-                 "beach_arm_1",
-                 "thirdtrimester_arm_1",
-                 "beachphone_pass_fail",)
+                 "beachphone_pass_fail")
+
+# Events 
+events_to_retain  <- c("third_trimester_arm_1", "beach_arm_1")
+
 # participants
 participant.records.v1=c("BLS001A",
                      "BLS002A",
@@ -66,6 +69,8 @@ dat<- redcap_read(
   records= participant.records.v1,
   redcap_uri = uri, 
   token      = beach_token, 
-  fields     = desired_fields
+  fields     = desired_fields,
+  events     = events_to_retain,
 )$data
 head(dat)
+```
