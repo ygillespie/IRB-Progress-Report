@@ -69,3 +69,20 @@ dat<- redcap_read(
   fields     = desired_fields
 )$data
 head(dat)
+
+dat.f=dat %>%
+  select(-redcap_event_name,-redcap_repeat_instrument,-redcap_repeat_instance) %>%
+  mutate(beach_part_drop_out = recode(beach_part_drop_out, 
+                                      "1"="dropped","2"="not-dropped"),
+         beach_arm_1    = recode(beach_arm_1, 
+                                 "1"="3rd_tri","2"="2wks","3"="2mon","4"="6mon","5"="12mon"),
+         thirdtrimester_arm_1 = recode(thirdtrimester_arm_1, 
+                                       "1"="vaginally","2"="c-section"),
+         beachphone_pass_fail    = recode(beachphone_pass_fail,
+                                          "1"="Pass","2"="Fail"))%>%
+#                 "beach_part_drop_out",
+  "beach_arm_1",
+"thirdtrimester_arm_1",
+"beachphone_pass_fail"
+  
+  distinct()
