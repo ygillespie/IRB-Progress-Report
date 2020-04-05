@@ -82,3 +82,42 @@ dat.f=dat %>%
   
   distinct()
 ```
+
+
+```{r , warning=FALSE, include=FALSE}
+Drop_out <- dat.f%>%
+  select(test_id,beach_part_drop_out)%>%
+  group_by(test_id,beach_part_drop_out)%>%
+  filter(beach_part_drop_out == "dropped")
+  summarise(Drop_out)
+```
+
+
+```{r , warning=FALSE, include=FALSE}
+Active <- dat.f%>%
+  select(test_id,beach_study_complete)%>%
+  group_by(test_id,beach_study_complete)%>%
+  filter(beach_study_complete == 2 )
+  summarise(Active)
+```
+
+```{r , warning=FALSE, include=FALSE}
+Passed <- dat.f%>%
+  select(test_id,beachphone_pass_fail)%>%
+  group_by(test_id,beachphone_pass_fail)%>%
+  filter(beachphone_pass_fail == "Pass")
+  summarise(Passed)
+```
+
+
+```{r , warning=FALSE, include=FALSE}
+#An idea for the table 
+#Change letters to numbers and numbers to test id
+dat.f <- data.frame(Passed = sample(letters[1:3], 23, replace = TRUE), 
+                   Acitve= sample(letters[1:3], 23, replace = TRUE),
+                   Drop_out= sample(letters[1:3], 23, replace = TRUE))
+
+# have a look at the data set
+print.data.frame(dat.f)
+
+```
