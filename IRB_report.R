@@ -1,5 +1,5 @@
 ---
-  title: "NIH Progress Report"
+  title: "IRB Progress Report"
 author: "Yasmine .G"
 date: "Febuary 11, 2020"
 output:
@@ -10,7 +10,7 @@ toc: yes
 toc_float: yes
 ---
   
-  ```{r setup, include=FALSE, warning = FALSE}
+```{r setup, include=FALSE, warning = FALSE}
 library(knitr, warn.conflicts = F, quietly = T)
 library(tidyr, warn.conflicts = F, quietly = T)
 library(dplyr, warn.conflicts = F, quietly = T)
@@ -32,33 +32,32 @@ rcon <- redcapConnection(url=uri, token=beach_token)
 # variables
 desired_fields=c("test_id","redcap_event_name",
                  "beach_part_drop_out",
-                 "beach_arm_1",
-                 "thirdtrimester_arm_1",
-                 "beachphone_pass_fail",)
+                 "beachphone_pass_fail",
+                 "beach_study_complete")
 # participants
 participant.records.v1=c("BLS001A",
-                     "BLS002A",
-                     "BLS003A",
-                     "BLS007A",
-                     "BLS008A",
-                     "BLS011A",
-                     "BLS012A",
-                     "BLS013A",
-                     "BLS014A",
-                     "BLS016A",
-                     "BLS019A",
-                     "BLS020A",
-                     "BLS023A",
-                     "BLS025A",
-                     "BLS027A",
-                     "BLS028A",
-                     "BLS030A",
-                     "BLS032A",
-                     "BLS033A",
-                     "BLS034A",
-                     "BLS036A",
-                     "BLS038A",
-                     "BLS040A")
+                         "BLS002A",
+                         "BLS003A",
+                         "BLS007A",
+                         "BLS008A",
+                         "BLS011A",
+                         "BLS012A",
+                         "BLS013A",
+                         "BLS014A",
+                         "BLS016A",
+                         "BLS019A",
+                         "BLS020A",
+                         "BLS023A",
+                         "BLS025A",
+                         "BLS027A",
+                         "BLS028A",
+                         "BLS030A",
+                         "BLS032A",
+                         "BLS033A",
+                         "BLS034A",
+                         "BLS036A",
+                         "BLS038A",
+                         "BLS040A")
 # pull data
 ds <- data.frame(desired_fields)
 dat<- redcap_read(
@@ -69,20 +68,17 @@ dat<- redcap_read(
   fields     = desired_fields
 )$data
 head(dat)
+```
 
+```{r variable selection, include=FALSE}
 dat.f=dat %>%
   select(-redcap_event_name,-redcap_repeat_instrument,-redcap_repeat_instance) %>%
   mutate(beach_part_drop_out = recode(beach_part_drop_out, 
                                       "1"="dropped","2"="not-dropped"),
-         beach_arm_1    = recode(beach_arm_1, 
-                                 "1"="3rd_tri","2"="2wks","3"="2mon","4"="6mon","5"="12mon"),
-         thirdtrimester_arm_1 = recode(thirdtrimester_arm_1, 
-                                       "1"="vaginally","2"="c-section"),
+         beach_study_complete    = recode(beach_study_complete, 
+                                 "1"="Yes","2"="No"),
          beachphone_pass_fail    = recode(beachphone_pass_fail,
                                           "1"="Pass","2"="Fail"))%>%
-#                 "beach_part_drop_out",
-  "beach_arm_1",
-"thirdtrimester_arm_1",
-"beachphone_pass_fail"
   
   distinct()
+```
