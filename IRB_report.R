@@ -69,55 +69,58 @@ dat<- redcap_read(
 )$data
 head(dat)
 ```
-
+#clean data
 ```{r variable selection, include=FALSE}
 dat.f=dat %>%
   select(-redcap_event_name,-redcap_repeat_instrument,-redcap_repeat_instance) %>%
   mutate(beach_part_drop_out = recode(beach_part_drop_out, 
                                       "1"="dropped","2"="not-dropped"),
          beach_study_complete    = recode(beach_study_complete, 
-                                 "1"="Yes","2"="No"),
+                                 "1"="Yes","0"="No"),
          beachphone_pass_fail    = recode(beachphone_pass_fail,
                                           "1"="Pass","2"="Fail"))%>%
   
   distinct()
 ```
 
-
-```{r , warning=FALSE, include=FALSE}
+#summarize
+```{r , warning=FALSE, echo=FALSE}
 Drop_out <- dat.f%>%
   select(test_id,beach_part_drop_out)%>%
   group_by(test_id,beach_part_drop_out)%>%
-  filter(beach_part_drop_out == "dropped")
-  summarise(Drop_out)
+  filter(beach_part_drop_out == "dropped")%>%
+  filter(!is.na(beach_part_drop_out))%>%
+  distinct(test_id)%>%
+  group_by(beach_part_drop_out)%>%
+  summarise(count=n())
 ```
 
 
-```{r , warning=FALSE, include=FALSE}
+```{r , warning=FALSE, echo=FALSE}
 Active <- dat.f%>%
   select(test_id,beach_study_complete)%>%
   group_by(test_id,beach_study_complete)%>%
-  filter(beach_study_complete == 2 )
-  summarise(Active)
+  filter(beach_study_complete != "Yes" )%>%
+ filter(!is.na(beach_study_completel))%>%
+  distinct(test_id)%>%
+  group_by(beach_study_complete)%>%
+  summarise(count=n())
 ```
 
-```{r , warning=FALSE, include=FALSE}
+```{r , warning=FALSE, echo=FALSE}
 Passed <- dat.f%>%
   select(test_id,beachphone_pass_fail)%>%
   group_by(test_id,beachphone_pass_fail)%>%
-  filter(beachphone_pass_fail == "Pass")
-  summarise(Passed)
+  filter(!is.na(beachphone_pass_fail))%>%
+  distinct(test_id)%>%
+  group_by(beachphone_pass_fail)%>%
+  summarise(count=n())
+#formattable(Passed,align=c("l","r"))
 ```
 
-
-```{r , warning=FALSE, include=FALSE}
-#An idea for the table 
-#Change letters to numbers and numbers to test id
-dat.f <- data.frame(Passed = sample(letters[1:3], 23, replace = TRUE), 
-                   Acitve= sample(letters[1:3], 23, replace = TRUE),
-                   Drop_out= sample(letters[1:3], 23, replace = TRUE))
-
-# have a look at the data set
-print.data.frame(dat.f)
-
+#format
+```{r , warning=FALSE, echo=FALSE}
+#align different dataframes into one and then create table from it
+test<-full_join(Passed,Active, by="count")
 ```
+  
