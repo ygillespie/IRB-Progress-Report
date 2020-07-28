@@ -1,13 +1,13 @@
 ---
-  title: "IRB Progress Report"
+title: "IRB Progress Report"
 author: "Yasmine .G"
 date: "Febuary 11, 2020"
 output:
   html_document:
-  highlight: tango
-theme: spacelab
-toc: yes
-toc_float: yes
+    highlight: tango
+    theme: spacelab
+    toc: yes
+    toc_float: yes
 ---
   
 ```{r setup, include=FALSE, warning = FALSE}
@@ -43,6 +43,7 @@ desired_fields=c("test_id","redcap_event_name",
 participant.records.v1=c("BLS001A",
                          "BLS002A",
                          "BLS003A",
+                         "BLS006A",
                          "BLS007A",
                          "BLS008A",
                          "BLS011A",
@@ -76,11 +77,12 @@ dat<- redcap_read(
 head(dat)
 ```
 
-```{r variable selection, include=FALSE}
+```{r , include=FALSE}
 dat.f=dat %>%
   select(-redcap_event_name,-redcap_repeat_instrument,-redcap_repeat_instance) %>%
+  distinct(test_id, .keep_all = TRUE)%>%
   mutate(beach_part_drop_out = recode(beach_part_drop_out, 
-                                      "1"="dropped","2"="not-dropped"),
+                                      "1"="dropped","NA"="not-dropped"),
          beach_study_complete    = recode(beach_study_complete, 
                                  "1"="Yes","0"="No"),
          beachphone_pass_fail    = recode(beachphone_pass_fail,
@@ -95,7 +97,9 @@ Drop_out <- dat.f%>%
   select(test_id,beach_part_drop_out)%>%
   group_by(test_id,beach_part_drop_out)%>%
   filter(beach_part_drop_out == "dropped")%>%
-  summarise(count=n())
+  summarise()
+
+Drop_out
 ```
 
 
@@ -103,9 +107,10 @@ Drop_out <- dat.f%>%
 Active <- dat.f%>%
   select(test_id,beach_study_complete)%>%
   group_by(test_id,beach_study_complete)%>%
-  filter(beach_study_complete != "Yes" )%>%
-  summarise(count=n())
+  filter(beach_study_complete != "Yes" && test_id %in% Drop_out == FALSE)%>%
+  summarise()
 
+Active
 ```
 
 ```{r , warning=FALSE, echo=FALSE}
@@ -118,6 +123,8 @@ Passed <- dat.f%>%
   summarise(count=n())
 
 #formattable(Passed,align=c("l","r"))
+
+Passed
 ```
 
 
@@ -125,8 +132,8 @@ Passed <- dat.f%>%
 
 
 #align different dataframes into one and then create table from it
-test<-full_join(Passed,Active, by="count")
-test<-
+  #test<-full_join(Passed,Active, by="count")
+
 
 
 ```
